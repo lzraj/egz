@@ -128,45 +128,45 @@ app.post("/register", (req, res) => {
 
 ////////////////////CREATE////////////////////
 
-    app.post("/server/ideas", (req, res) => {
+    app.post("/server/books/", (req, res) => {
         const sql = `
-        INSERT INTO ideas (title, idea, goal, image)
+        INSERT INTO books (title, description, category, reserved, image)
         VALUES (?, ?, ?, ?, ?)
         `;
-        con.query(sql, [req.body.title, req.body.idea, req.body.goal, req.body.image], (err, result) => {
+        con.query(sql, [req.body.title, req.body.description, req.body.category, req.body.reserved, req.body.image], (err, result) => {
             if (err) throw err;
-            res.send({ msg: 'OK', text: 'New idea was added.', type: 'success' });
+            res.send({ msg: 'OK', text: 'New book was added.', type: 'success' });
         });
     });
 
-    app.post("/ideas", (req, res) => {
+    app.post("/books/", (req, res) => {
 
         const sql = `
-        INSERT INTO ideas (title, idea, goal, remaining, image, user_id)
+        INSERT INTO books (title, description, category, reserved, image, user_id)
         VALUES (?, ?, ?, ?, ?, ?)
         `;
        
-        con.query(sql, [req.body.title, req.body.idea, req.body.goal, req.body.goal, req.body.image, req.body.user_id], (err, result) => {
+        con.query(sql, [req.body.title, req.body.description, req.body.category, req.body.reserved, req.body.image, req.body.user_id], (err, result) => {
             if (err) throw err;
-            res.send({ msg: 'OK', text: 'New idea was added.', type: 'success' });
+            res.send({ msg: 'OK', text: 'New Book was added.', type: 'success' });
         });
     });
 
 
-    app.post("/givers", (req, res) => {
+    app.post("/readers", (req, res) => {
         const sql = `
-        INSERT INTO givers (name, sum, idea_id)
+        INSERT INTO givers (name, reserved, book_id)
         VALUES (?, ?, ?)
         `;
-        con.query(sql, [req.body.name, req.body.sum, req.body.idea_id], (err, result) => {
+        con.query(sql, [req.body.name, req.body.reserved, req.body.book_id], (err, result) => {
             if (err) throw err;
-            res.send({ msg: 'OK', text: 'Contribution was added.', type: 'success' });
+            res.send({ msg: 'OK', text: 'Reservation was added.', type: 'success' });
         });
     });
 
     app.post("/home/comments/:id", (req, res) => {
         const sql = `
-        INSERT INTO comments (post, idea_id)
+        INSERT INTO comments (post, book_id)
         VALUES (?, ?)
         `;
         con.query(sql, [req.body.post, req.params.id], (err, result) => {
@@ -177,11 +177,11 @@ app.post("/register", (req, res) => {
 
 //////////////////// READ (all) ////////////////////
 
-app.get("/server/ideas", (req, res) => {
+app.get("/server/books", (req, res) => {
     const sql = `
     SELECT *
-    FROM ideas
-    ORDER BY raised ASC
+    FROM books
+    ORDER BY title ASC
     `;
     con.query(sql, (err, result) => {
         if (err) throw err;
@@ -189,13 +189,13 @@ app.get("/server/ideas", (req, res) => {
     });
 });
 
-app.get("/ideas/:id", (req, res) => {
+app.get("/books/:id", (req, res) => {
     const sql = `
-    SELECT i.*
-    FROM ideas AS i
+    SELECT b.*
+    FROM books AS b
     INNER JOIN users AS u
-    ON i.user_id = u.id 
-    WHERE i.user_id = ?
+    ON b.user_id = u.id 
+    WHERE b.user_id = ?
     `;
     con.query(sql, [req.params.id], (err, result) => {
         if (err) throw err;
@@ -203,9 +203,9 @@ app.get("/ideas/:id", (req, res) => {
     });
 });
 
-app.get("/home/ideas", (req, res) => {
+app.get("/home/books", (req, res) => {
     const sql = `
-    SELECT i.*, g.id as gid, g.sum, g.name, g.idea_id FROM ideas AS i LEFT JOIN givers AS g ON g.idea_id = i.id  WHERE i.state = 1 ORDER BY i.title
+    SELECT b.*, r.id as rid, r.reserved, r.name, r.book_id FROM books AS b LEFT JOIN readers AS r ON r.book_id = b.id  WHERE b.reserved = 0 ORDER BY b.title
     `;
     con.query(sql, (err, result) => {
         if (err) throw err;
@@ -214,20 +214,20 @@ app.get("/home/ideas", (req, res) => {
 });
 app.get("/home/comments/:id", (req, res) => {
     const sql = `
-    SELECT c.* FROM comments AS c WHERE c.idea_id = ?
+    SELECT c.* FROM comments AS c WHERE c.book_id = ?
     `;
     con.query(sql,  [req.params.id], (err, result) => {
         if (err) throw err;
         res.send(result);
     });
 });
-app.get("/server/ideas/wc", (req, res) => {
+app.get("/server/books/wc", (req, res) => {
     const sql = `
-    SELECT i.*, c.id AS cid, c.post
-    FROM ideas AS i
+    SELECT b.*, c.id AS cid, c.post
+    FROM books AS b
     INNER JOIN comments AS c
-    ON c.idea_id = i.id
-    ORDER BY i.title
+    ON c.book_id = b.id
+    ORDER BY b.title
     `;
     con.query(sql, (err, result) => {
         if (err) throw err;
@@ -239,26 +239,26 @@ app.get("/server/ideas/wc", (req, res) => {
 
 //////////////////// DELETE ////////////////////
 
-app.delete("/server/ideas/:id", (req, res) => {
+app.delete("/server/books/:id", (req, res) => {
     const sql = `
-    DELETE FROM ideas
+    DELETE FROM books
     WHERE id = ?
     `;
     con.query(sql, [req.params.id], (err, result) => {
         if (err) throw err;
-        res.send({ msg: 'OK', text: 'Idea was deleted.', type: 'info' });
+        res.send({ msg: 'OK', text: 'Book was deleted.', type: 'info' });
 
     });
 });
 
-app.delete("/ideas/:id", (req, res) => {
+app.delete("/books/:id", (req, res) => {
     const sql = `
-    DELETE FROM ideas
+    DELETE FROM books
     WHERE id = ?
     `;
     con.query(sql, [req.params.id], (err, result) => {
         if (err) throw err;
-        res.send({ msg: 'OK', text: 'Idea was deleted.', type: 'info' });
+        res.send({ msg: 'OK', text: 'Book was deleted.', type: 'info' });
 
     });
 });
@@ -279,56 +279,55 @@ app.delete("/server/comments/:id", (req, res) => {
 
 
 //////////////////// EDIT ////////////////////
-app.put("/home/ideas/:id", (req, res) => {
+app.put("/home/books/:id", (req, res) => {
     const sql = `
-    UPDATE ideas
+    UPDATE books
     SET 
-    raised = raised + ?, 
-    WHERE sum = ?
+    reserved =  ?, 
+    WHERE user_id = ?
     `;
-    con.query(sql, [req.body.raised, req.params.id], (err, result) => {
+    con.query(sql, [req.body.reserved, req.body.user_id, req.params.id], (err, result) => {
         if (err) throw err;
-        res.send({ msg: 'OK', text: 'Thanks for your donation.', type: 'info' });
+        res.send({ msg: 'OK', text: 'Thanks for your Reservation', type: 'info' });
 
     });
 });
-//kai giveris paaukoja
-app.put("/ideas/:id", (req, res) => {
+app.put("/books/:id", (req, res) => {
     const sql = `
-    UPDATE ideas
+    UPDATE books
     SET 
-    raised = raised + ?, remaining = goal - raised
+    reserved = ?
     WHERE id = ?
     `;
-    con.query(sql, [req.body.raised, req.params.id], (err, result) => {
+    con.query(sql, [req.body.reserved, req.params.id], (err, result) => {
         if (err) throw err;
-        res.send({ msg: 'OK', text: 'Thanks for your donation.', type: 'info' });
+        res.send({ msg: 'OK', text: 'Thanks for your Reservation', type: 'info' });
 
     });
 });
 
-app.put("/server/ideas/:id", (req, res) => {
+app.put("/server/books/:id", (req, res) => {
     let sql;
     let r;
     if (req.body.deletePhoto) {
         sql = `
-        UPDATE ideas
-        SET title = ?, idea = ?, goal = ?, image = null
+        UPDATE books
+        SET title = ?, description = ?, category = ?, reserved = ?, image = null
         WHERE id = ?
         `;
-        r = [req.body.title, req.body.idea, req.body.goal, req.params.id];
+        r = [req.body.title, req.body.description, req.body.category, req.body.reserved, req.params.id];
     } else if (req.body.image) {
         sql = `
-        UPDATE ideas
-        SET title = ?, idea = ?, goal = ?, image = ?
+        UPDATE books
+        SET title = ?, description = ?, category = ?, reserved = ?, image = ?
         WHERE id = ?
         `;
-        r = [req.body.title, req.body.idea, req.body.goal, req.body.image, req.params.id];
+        r = [req.body.title, req.body.description, req.body.category, req.body.reserved, req.body.image, req.params.id];
     } 
     else if(req.body.confirmed === 0 || req.body.confirmed === 1){
         sql = `
-        UPDATE ideas
-        SET state = ?
+        UPDATE books
+        SET reserved = ?
         WHERE id = ?
         `;
         r = [req.body.confirmed, req.params.id];
@@ -336,15 +335,15 @@ app.put("/server/ideas/:id", (req, res) => {
     
     else {
         sql = `
-        UPDATE ideas
-        SET title = ?, idea = ?, goal = ?
+        UPDATE books
+        SET title = ?, description = ?, category = ?, reserved = ?
         WHERE id = ?
         `;
-        r = [req.body.title, req.body.idea, req.body.goal, req.params.id]
+        r = [req.body.title, req.body.description, req.body.category, req.body.reserved, req.params.id]
     }
     con.query(sql, r, (err, result) => {
         if (err) throw err;
-        res.send({ msg: 'OK', text: 'The Idea was edited.', type: 'success' });
+        res.send({ msg: 'OK', text: 'The Book was edited.', type: 'success' });
 
     });
 });

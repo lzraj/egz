@@ -8,7 +8,7 @@ import DataContext from "../../Contexts/DataContext";
 function Main() {
 
     const [lastUpdate, setLastUpdate] = useState(Date.now());
-    const [ideas, setIdeas] = useState(null);
+    const [books, setBooks] = useState(null);
     const [comment, setComment] = useState(null);
     const { makeMsg } = useContext(DataContext);
 
@@ -26,9 +26,9 @@ function Main() {
 
     // READ for list
     useEffect(() => {
-        axios.get('http://localhost:3004/server/ideas/wc', authConfig())
+        axios.get('http://localhost:3004/server/books/wc', authConfig())
             .then(res => {
-                setIdeas(reList(res.data));
+                setBooks(reList(res.data));
             })
     }, [lastUpdate]);
 
@@ -46,7 +46,7 @@ function Main() {
     return (
         <Comment.Provider value={{
             setComment,
-            ideas
+            books
         }}>
             <div className="container">
                 <div className="row">

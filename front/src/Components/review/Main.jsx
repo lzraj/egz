@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Ideas from '../../Contexts/Ideas';
+import Books from '../../Contexts/Books';
 import List from './List';
 import axios from 'axios';
 import Edit from './Edit';
@@ -9,16 +9,16 @@ function Main() {
 
     const [lastUpdate, setLastUpdate] = useState(Date.now());
     const [createData, setCreateData] = useState(null);
-    const [ideas, setIdeas] = useState(null);
+    const [books, setBooks] = useState(null);
     const [deleteData, setDeleteData] = useState(null);
     const [modalData, setModalData] = useState(null);
     const [editData, setEditData] = useState(null);
 
     // READ for list
     useEffect(() => {
-        axios.get('http://localhost:3004/server/ideas', authConfig())
+        axios.get('http://localhost:3004/server/books', authConfig())
             .then(res => {
-                setIdeas(res.data);
+                setBooks(res.data);
             })
     }, [lastUpdate]);
 
@@ -26,7 +26,7 @@ function Main() {
         if (null === createData) {
             return;
         }
-        axios.post('http://localhost:3004/server/ideas', createData, authConfig())
+        axios.post('http://localhost:3004/server/books', createData, authConfig())
             .then(res => {
                 setLastUpdate(Date.now());
             });
@@ -36,7 +36,7 @@ function Main() {
         if (null === deleteData) {
             return;
         }
-        axios.delete('http://localhost:3004/server/ideas/' + deleteData.id, authConfig())
+        axios.delete('http://localhost:3004/server/books/' + deleteData.id, authConfig())
         .then(res => {
             setLastUpdate(Date.now());
         })
@@ -47,7 +47,7 @@ function Main() {
         if (null === editData) {
             return;
         }
-        axios.put('http://localhost:3004/server/ideas/' + editData.id, editData, authConfig())
+        axios.put('http://localhost:3004/server/books/' + editData.id, editData, authConfig())
             .then(res => {
                 setLastUpdate(Date.now());
             });
@@ -56,9 +56,9 @@ function Main() {
 
 
     return (
-        <Ideas.Provider value={{
+        <Books.Provider value={{
             setCreateData,
-            ideas,
+            books,
             setDeleteData,
             modalData,
             setModalData,
@@ -72,7 +72,7 @@ function Main() {
                 </div>
             </div>
             <Edit />
-        </Ideas.Provider>
+        </Books.Provider>
     )
 }
 export default Main;

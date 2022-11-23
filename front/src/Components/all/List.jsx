@@ -4,35 +4,35 @@ import Line from './Line';
 
 const sortData = [
     { v: 'default', t: 'Default' },
-    { v: 'remaining_asc', t: 'Least Remaining' },
-    { v: 'remaining_desc', t: 'Most Remaining' },
+    { v: 'title_asc', t: 'Sort Alphabetically' },
+    { v: 'title_desc', t: 'Sort Unalphabetically' },
 ];
 
 function List() {
 
-    const {ideas, setIdeas} = useContext(All);
+    const {books, setBooks} = useContext(All);
     const [sortBy, setSortBy] = useState('default');
     const [stats, setStats] = useState({itemCount: null});
 
     useEffect(() => {
-        if (null === ideas) {
+        if (null === books) {
             return;
         }
-        setStats(s => ({...s, itemCount: ideas.length}));
-    }, [ideas]);
+        setStats(s => ({...s, itemCount: books.length}));
+    }, [books]);
     useEffect(() => {
         switch (sortBy) {
-            case 'remaining_asc':
-             setIdeas(m => [...m].sort((a, b) => a[1][0].remaining - b[1][0].remaining));
+            case 'title_asc':
+             setBooks(m => [...m].sort((a, b) => a[1][0].title - b[1][0].title));
                 break;
-            case 'remaining_desc':
-                setIdeas(m => [...m].sort((b, a) => a[1][0].remaining - b[1][0].remaining));
+            case 'title_desc':
+                setBooks(m => [...m].sort((b, a) => a[1][0].title - b[1][0].title));
                 break;
             default:
-                setIdeas(m => [...m ?? []].sort((a, b) => a[1][0].row - b[1][0].row));
+                setBooks(m => [...m ?? []].sort((a, b) => a[1][0].row - b[1][0].row));
         }
 
-    }, [sortBy, setIdeas]);
+    }, [sortBy, setBooks]);
     return (
         <>
             <div className="card m-4">
@@ -49,11 +49,11 @@ function List() {
                 </div>
             </div>
             <div className="card m-4">
-                <h5 className="card-header">Idea List ({stats.itemCount})</h5>
+                <h5 className="card-header">Available Book List ({stats.itemCount})</h5>
                 <div className="card-body">
                     <ul className="list-group">
                         {
-                            ideas?.map(i => <Line key={i[1][0].id} idea={i} />)
+                            books?.map(i => <Line key={i[1][0].id} book={i} />)
                         }
                     </ul>
                 </div>

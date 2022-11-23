@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState, useRef } from "react";
-import Ideas from "../../Contexts/Ideas";
+import Books from "../../Contexts/Books";
 import getBase64 from "../../Functions/getBase64";
 
 function Edit() {
   const [title, setTitle] = useState("");
-  const [idea, setIdea] = useState("");
-  const [goal, setGoal] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
+  const [reserved, setReserved] = useState("");
   const fileInput = useRef();
   const [photoPrint, setPhotoPrint] = useState(null);
   const [deletePhoto, setDeletePhoto] = useState(false);
@@ -18,13 +19,14 @@ function Edit() {
       });
   };
 
-  const { setEditData, modalData, setModalData } = useContext(Ideas);
+  const { setEditData, modalData, setModalData } = useContext(Books);
 
   const edit = () => {
     setEditData({
       title,
-      idea,
-      goal,
+      description,
+      category,
+      reserved,
       id: modalData.id,
       deletePhoto: deletePhoto ? 1 : 0,
       image: photoPrint,
@@ -38,8 +40,8 @@ function Edit() {
       return;
     }
     setTitle(modalData.title);
-    setIdea(modalData.idea);
-    setGoal(modalData.goal);
+    setDescription(modalData.description);
+    setCategory(modalData.category);
     setPhotoPrint(modalData.image);
     setDeletePhoto(false);
   }, [modalData]);
@@ -53,7 +55,7 @@ function Edit() {
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Edit Idea</h5>
+            <h5 className="modal-title">Edit Book</h5>
             <button
               onClick={() => setModalData(null)}
               type="button"
@@ -72,21 +74,29 @@ function Edit() {
                   onChange={(e) => setTitle(e.target.value)}/>
               </div>
               <div className="mb-3">
-                <label className="form-label">Idea Description</label>
+                <label className="form-label">Description</label>
                 <textarea
                   type="text"
                   rows="4"
                   className="form-control"
-                  value={idea}
-                  onChange={(e) => setIdea(e.target.value)}></textarea>
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}></textarea>
               </div>
               <div className="mb-3">
-                <label className="form-label">Goal Amount</label>
+                <label className="form-label">Category</label>
                 <input
                   type="text"
                   className="form-control"
-                  value={goal}
-                  onChange={(e) => setGoal(e.target.value)}/>
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}/>
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Reservation</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={reserved}
+                  onChange={(e) => setReserved(e.target.value)}/>
               </div>
              
               <div className="mb-3">

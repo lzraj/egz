@@ -1,14 +1,14 @@
 import { useState, useContext, useRef } from 'react';
-import Ideas from '../../Contexts/Ideas';
+import Ideas from '../../Contexts/Books';
 import DataContext from '../../Contexts/DataContext';
 import getBase64 from '../../Functions/getBase64';
 
 function Create() {
 
     const [title, setTitle] = useState('');
-    const [idea, setIdea] = useState('');
-    const [goal, setGoal] = useState('');
-    const [raised, setRaised] = useState('');
+    const [description, setDescription] = useState('');
+    const [category, setCategory] = useState('');
+    const [reserved, setReserved] = useState('0');
     const fileInput = useRef();
 
     const { setCreateData, userId } = useContext(Ideas);
@@ -29,49 +29,49 @@ function Create() {
                 makeMsg('Invalid title', 'error');
                 return;
             }
-            if (goal.replace(/[^\d.]/, '') !== goal) {
-                makeMsg('Invalid goal', 'error');
+            if (description.length === 0 || description.length > 200) {
+                makeMsg('Invalid description', 'error');
                 return;
             }
-            if (parseFloat(goal) > 10000000) {
-                makeMsg('Max goal is 10M', 'error');
-                return;
-            }
+            
 
         setCreateData({
             title,
-            idea,
-            goal: parseFloat(goal),
-            raised,
+            description,
+            category,
+            reserved,
             image: photoPrint,
             user_id: userId
         
         });
         setTitle('');
-        setIdea('');
-        setGoal('');
-        setRaised(0);
+        setDescription('');
+        setCategory('');
+        setReserved('0')
         setPhotoPrint(null);
         fileInput.current.value = null;
     }
 
     return (
         <div className="card m-4">
-            <h5 className="card-header">New Idea</h5>
+            <h5 className="card-header">New Book</h5>
             <div className="card-body">
                 <div className="mb-3">
                     <label className="form-label">Title</label>
                     <input type="text" className="form-control" value={title} onChange={e => setTitle(e.target.value)} />
                 </div>
                 <div className="mb-3">
-                    <label className="form-label">Idea Description</label>
-                    <textarea type="text" className="form-control" rows="5" value={idea} onChange={e => setIdea(e.target.value)}></textarea> 
+                    <label className="form-label">Description</label>
+                    <textarea type="text" className="form-control" rows="5" value={description} onChange={e => setDescription(e.target.value)}></textarea> 
                 </div>    
-                <label className="form-label">Goal</label>
+                <label className="form-label">Category</label>
                 <div className="input-group mb-3">
-                    <span className="input-group-text">€</span>
-                    <input type="text" className="form-control" value={goal} onChange={e => setGoal(e.target.value)} /> 
-                </div>   
+                    <input type="text" className="form-control" value={category} onChange={e => setCategory(e.target.value)} /> 
+                </div>  
+                <label className="form-label">Reserved</label>
+                <div className="input-group mb-3">
+                    <input type="text" className="form-control" value={reserved} onChange={e => setReserved(e.target.value)} /> 
+                </div>  
                 <div className="mb-3">
                     <label className="form-label">Image</label>
                     <input ref={fileInput} type="file" className="form-control" onChange={doPhoto} />

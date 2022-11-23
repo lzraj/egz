@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Ideas from '../../Contexts/Ideas';
+import Books from '../../Contexts/Books';
 import Create from './Create';
 import List from './List';
 import axios from 'axios';
@@ -10,7 +10,7 @@ function Main({userId}) {
 
     const [lastUpdate, setLastUpdate] = useState(Date.now());
     const [createData, setCreateData] = useState(null);
-    const [ideas, setIdeas] = useState(null);
+    const [books, setBooks] = useState(null);
     const [deleteData, setDeleteData] = useState(null);
     const [modalData, setModalData] = useState(null);
     // READ for list
@@ -19,9 +19,9 @@ function Main({userId}) {
         if (null === userId) {
             return;
         }
-        axios.get('http://localhost:3004/ideas/' + userId, authConfig())
+        axios.get('http://localhost:3004/books/' + userId, authConfig())
             .then(res => {
-                setIdeas(res.data);
+                setBooks(res.data);
             })
     }, [lastUpdate, userId]);
 
@@ -29,7 +29,7 @@ function Main({userId}) {
         if (null === createData) {
             return;
         }
-        axios.post('http://localhost:3004/ideas', createData, authConfig())
+        axios.post('http://localhost:3004/books', createData, authConfig())
             .then(res => {
                 setLastUpdate(Date.now());
             });
@@ -39,7 +39,7 @@ function Main({userId}) {
         if (null === deleteData) {
             return;
         }
-        axios.delete('http://localhost:3004/ideas/' + deleteData.id, authConfig())
+        axios.delete('http://localhost:3004/books/' + deleteData.id, authConfig())
         .then(res => {
             setLastUpdate(Date.now());
         })
@@ -48,9 +48,9 @@ function Main({userId}) {
 
 
     return (
-        <Ideas.Provider value={{
+        <Books.Provider value={{
             setCreateData,
-            ideas,
+            books,
             setDeleteData,
             modalData,
             setModalData,
@@ -58,16 +58,16 @@ function Main({userId}) {
         }}>
             <div className="container">
                 <div className="row">
-                    <div className="col col-lg-4 col-md-12">
+                    <div className="col-lg-4 col-md-12">
                         <Create />
                     </div>
-                    <div className="col col-lg-8 col-md-12">
+                    <div className="col-lg-8 col-md-12">
                         <List />
                     </div>
                 </div>
             </div>
             <Edit />
-        </Ideas.Provider>
+        </Books.Provider>
     )
 }
 export default Main;

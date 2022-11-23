@@ -2,7 +2,7 @@ import './App.scss';
 import 'bootstrap/dist/js/bootstrap.bundle';
 import { BrowserRouter, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import Nav from './Components/Nav';
-import Home from './Components/ideas/Main';
+import Books from './Components/books/Main';
 import ReviewIdea from './Components/review/Main';
 import Comments from './Components/comment/Main';
 import RegisterPage from './Components/register/Main';
@@ -55,8 +55,8 @@ function App() {
         <ShowNav roleChange={roleChange} setUserId={setUserId}/>
         <Messages />
         <Routes>
-          <Route path="/" element={<RequireAuth role="user"><Home  userId={userId}/></RequireAuth>}></Route>
-          <Route path="/all" element={<RequireAuth role="user"><All /></RequireAuth>}></Route>
+          <Route path="/" element={<RequireAuth role="user"><All  userId={userId}/></RequireAuth>}></Route>
+          <Route path="/create" element={<RequireAuth role="admin"><Books userId={userId}/></RequireAuth>}></Route>
           <Route path="/review" element={<RequireAuth role="admin"><ReviewIdea/></RequireAuth>}></Route>
           <Route path="/comments" element={<RequireAuth role="admin"><Comments /></RequireAuth>}></Route>
           <Route path="/login" element={<LoginPage setRoleChange={setRoleChange} />} />

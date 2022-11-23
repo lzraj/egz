@@ -9,10 +9,12 @@ import DataContext from "../../Contexts/DataContext";
 function Main( ) {
 
         const [lastUpdate, setLastUpdate] = useState(Date.now());
-        const [ideas, setIdeas] = useState(null);
-        const [donate, setDonate] = useState(null);
+        const [books, setBooks] = useState(null);
+        const [reserve, setReserve] = useState(null);
         const [comment, setComment] = useState(null);
         const { makeMsg } = useContext(DataContext);
+        const [editData, setEditData] = useState(null);
+
 
 
 
@@ -31,9 +33,9 @@ function Main( ) {
 
         // READ for list
         useEffect(() => {
-            axios.get('http://localhost:3004/home/ideas', authConfig())
+            axios.get('http://localhost:3004/home/books', authConfig())
                 .then(res => {
-                    setIdeas(reList(res.data));
+                    setBooks(reList(res.data));
                 })
         }, [lastUpdate]);
 
@@ -41,7 +43,7 @@ function Main( ) {
             if (null === comment) {
                 return;
             }
-            axios.post('http://localhost:3004/home/comments/' + comment.idea_id, comment, authConfig())
+            axios.post('http://localhost:3004/home/comments/' + comment.book_id, comment, authConfig())
             .then(res => {
                 setLastUpdate(Date.now());
                 makeMsg(res.data.text, res.data.type);
@@ -50,26 +52,37 @@ function Main( ) {
         
 
          useEffect(() => {
-            if (null === donate) {
+            if (null === reserve) {
                 return;
             }
-            axios.post('http://localhost:3004/givers/', donate, authConfig())
+            axios.post('http://localhost:3004/readers/', reserve, authConfig())
             .then(res => {
                 setLastUpdate(Date.now());
             })
-            axios.put('http://localhost:3004/ideas/'+ donate.idea_id, {raised:donate.sum }, authConfig())
+            axios.put('http://localhost:3004/books/'+ reserve.book_id, authConfig())
             .then(res => {
                 setLastUpdate(Date.now());
             })
-         }, [donate]);
+         }, [reserve]);
+
+             useEffect(() => {
+        if (null === editData) {
+            return;
+        }
+        axios.put('http://localhost:3004/server/books/' + editData.id, editData, authConfig())
+            .then(res => {
+                setLastUpdate(Date.now());
+            });
+    }, [editData]);
 
 
       return (
         <All.Provider value={{
-            ideas,
-            setIdeas,
-            setDonate,
-            setComment
+            books,
+            setBooks,
+            setReserve,
+            setComment,
+            setEditData
         }}>
         <div className="container">
             <div className="row">
